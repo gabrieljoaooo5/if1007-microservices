@@ -1,6 +1,7 @@
 const express = require('express');
 const UserController = require('./controllers/UserController');
 const TrelloController = require('./controllers/ImportToTrello');
+const StrateegiaController = require('./controllers/ExportFromStrateegia');
 
 const routes = express.Router();
 
@@ -9,5 +10,5 @@ routes.get('/users', UserController.show);
 routes.put('/users', UserController.update);
 
 routes.put('/importTrello', TrelloController.import);
-
+routes.get('/exportSrateegia', StrateegiaController.export);
 module.exports = routes;
