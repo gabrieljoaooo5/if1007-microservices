@@ -10,7 +10,7 @@ module.exports = {
 
 
         //Vai buscar se existe uma Organization com o nome do Lab;
-        let org = fetch(`https://api.trello.com/1/organizations/${labName}?key=${user.consumerKey}&token=${user.tokenTrello}`, {
+        let org = await fetch(`https://api.trello.com/1/organizations/${labName}?key=${user.consumerKey}&token=${user.tokenTrello}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
@@ -28,7 +28,7 @@ module.exports = {
         if(!org) {
 
             //Caso não encontra uma Organization com o nome do Lab, irá criar uma;
-            org = fetch(`https://api.trello.com/1/organizations?key=${user.consumerKey}&token=${user.tokenTrello}&displayName=${labName}`, {
+            org = await fetch(`https://api.trello.com/1/organizations?key=${user.consumerKey}&token=${user.tokenTrello}&displayName=${labName}`, {
                 method: 'POST',
                 headers: {
                   'Accept': 'application/json'
@@ -67,7 +67,7 @@ module.exports = {
             // const found = lab.find(element => element.name = kitName);
 
             //Criação de um novo Board, o qual terá o nome do Kit escolhido
-            const board = fetch(`https://api.trello.com/1/boards/?key=${user.consumerKey}&token=${user.tokenTrello}&idOrganization=${orgId}&name=${kitName}`, {
+            const board = await fetch(`https://api.trello.com/1/boards/?key=${user.consumerKey}&token=${user.tokenTrello}&idOrganization=${orgId}&name=${kitName}`, {
             method: 'POST'
             })
             .then(response => {
@@ -81,9 +81,9 @@ module.exports = {
             
             //Criação das listas e Cards no Board
             let counter = 0;
-            listOfQuestions.array.forEach(element => {
+            listOfQuestions.array.forEach(async element => {
                 
-                const list = fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name='Questão Essencial '${counter}&idBoard=${board.id}`, {
+                const list = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name='Questão Essencial '${counter}&idBoard=${board.id}`, {
                 method: 'POST'
                 })
                 .then(response => {
@@ -95,7 +95,7 @@ module.exports = {
                 .then(text => console.log(text))
                 .catch(err => console.error(err));
 
-                const card = fetch(`https://api.trello.com/1/cards?key=${user.consumerKey}&token=${user.tokenTrello}&idList=${list.id}$name=${element}`, {
+                const card = await fetch(`https://api.trello.com/1/cards?key=${user.consumerKey}&token=${user.tokenTrello}&idList=${list.id}$name=${element}`, {
                     method: 'POST'
                 })
                 .then(response => {

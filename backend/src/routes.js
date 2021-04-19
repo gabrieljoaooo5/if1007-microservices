@@ -9,6 +9,6 @@ routes.post('/users', UserController.store);
 routes.get('/users', UserController.show);
 routes.put('/users', UserController.update);
 
-routes.put('/importTrello', TrelloController.import);
+routes.post('/importTrello', TrelloController.import);
 routes.get('/exportSrateegia', StrateegiaController.export);
 module.exports = routes;
