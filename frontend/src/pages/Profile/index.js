@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { FiPower, FiTrash2 } from 'react-icons/fi';
+import { FiPower, FiTrello } from 'react-icons/fi';
 import { Card, Button, ButtonGroup } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
 
 import './styles.css';
+import api from '../../services/api';
 
 export default function Profile() {
   const [tab, setTab] = useState(0);
   const [eventKeyIndex, seteventKeyIndex] = useState("0");
   const [labName, setLabName] = useState("");
-  const [kitName, setKitName] = useState("");
 
+  const email = localStorage.getItem('userEmail');
 
   const history = useHistory();
 
@@ -951,6 +952,10 @@ export default function Profile() {
 
   const auxDataList = dataList;
 
+  useEffect(() => {
+    setLabName(dataList[0].key);
+  }, []);
+
   function handleIndex(index) {
     console.log(index);
 
@@ -962,7 +967,25 @@ export default function Profile() {
     setTab(index);
   }
 
-  function ExportToTrello() {
+  async function ImportToTrello(kitName, listOfQuestions) {
+    console.log(kitName);
+
+    const data = {
+      email,
+      labName,
+      kitName,
+      listOfQuestions
+    };
+
+    try {
+      console.log(data);
+      const response = await api.post('/importTrello', data);
+
+      console.log(response);
+
+    } catch (err) {
+      alert('Erro no cadastro, tente novamente.');
+    }
 
   }
 
@@ -996,8 +1019,8 @@ export default function Profile() {
         {dataList[tab].value.map((kit, index) => (
             <Card>
             <Card.Header>
-              <button onClick={ExportToTrello} type="button">
-                <FiPower size={18} color="#E02041" />
+              <button onClick={e => ImportToTrello(kit.key, kit.value)} type="button">
+                <FiTrello size={18} color="#E02041" />
               </button>
               <Accordion.Toggle as={Button} variant="link" eventKey={eventKeyIndex} onClick={e => handleIndex(index.toString())}>
                 {kit.key}
