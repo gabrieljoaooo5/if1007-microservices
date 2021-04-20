@@ -9,6 +9,7 @@ import api from '../../services/api';
 
 export default function Profile() {
   const [tab, setTab] = useState(0);
+  const [mapTab, setMapTab] = useState(0);
   const [eventKeyIndex, seteventKeyIndex] = useState("0");
   const [labName, setLabName] = useState("");
 
@@ -967,6 +968,10 @@ export default function Profile() {
     setTab(index);
   }
 
+  function handleMapTab(index) {
+    setMapTab(index);
+  }
+
   async function ImportToTrello(kitName, listOfQuestions) {
     console.log(kitName);
 
@@ -1007,33 +1012,51 @@ export default function Profile() {
 
       <h1>Casos cadastrados</h1>
 
-      <ButtonGroup>
-        {
-          auxDataList.map((projects, index) => (
-            <Button onClick={e => handleTab(projects.key, index)} >{projects.key}</Button>
-          ))
-        }
-      </ButtonGroup>
+      <div>
+        <ButtonGroup>
+          {
+            auxDataList.map((projects, index) => (
+              <Button onClick={e => handleTab(projects.key, index)} >{projects.key}</Button>
+            ))
+          }
+        </ButtonGroup>
+      </div>
 
-      <Accordion>
-        {dataList[tab].value.map((kit, index) => (
+      <div>
+        <ButtonGroup>
+        {
+          dataList[tab].value.map((map, index) => (
+            <Button onClick={e => handleMapTab(index)} >{map.key}</Button>
+          ))
+        } 
+        </ButtonGroup>
+      </div>
+
+      <div>
+       <Accordion>
+         {dataList[tab].value[mapTab].value.map((map, index) => (
             <Card>
             <Card.Header>
-              <button onClick={e => ImportToTrello(kit.key, kit.value)} type="button">
+
+              <button onClick={e => ImportToTrello(map.title, map.questions)} type="button">
                 <FiTrello size={18} color="#E02041" />
               </button>
+
               <Accordion.Toggle as={Button} variant="link" eventKey={eventKeyIndex} onClick={e => handleIndex(index.toString())}>
-                {kit.key}
+                {map.title}
               </Accordion.Toggle>
             </Card.Header>
-            { kit.value.map( questions => (
+            { map.questions.map( questions => (
               <Accordion.Collapse eventKey={eventKeyIndex}>
-              <Card.Body>{questions.title}</Card.Body>
+              <Card.Body>{questions.question}</Card.Body>
               </Accordion.Collapse>
             )) }
           </Card>
         ))} 
       </Accordion>
+      </div>
+      
+     
     </div>
   );
 }

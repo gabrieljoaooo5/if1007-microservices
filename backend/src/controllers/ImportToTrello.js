@@ -4,14 +4,18 @@ module.exports = {
 
     async  import(req, res) {
         try {
-            const { email, labName, kitName, listOfQuestions } = req.body;
+            let { email, labName, kitName, listOfQuestions } = req.body;
             const fetch = require('node-fetch');
-            console.log(email, labName, kitName, listOfQuestions);
+
             const user = await User.findOne({ email: email });
 
+            let listAux = [];
+
+            user.tokenTrello = "";
+            user.consumerKey = "";
 
             //Vai buscar se existe uma Organization com o nome do Lab;
-            let org = await fetch(`https://api.trello.com/1/organizations/${labName}?key=${user.consumerKey}&token=${user.tokenTrello}`, {
+            const listOfOrg = await fetch(`https://api.trello.com/1/members/me/organizations?key=${user.consumerKey}&token=${user.tokenTrello}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
@@ -23,8 +27,11 @@ module.exports = {
                     );
                     return response.text();
                 })
-                .then(text => console.log(text))
+                .then(text => listAux = JSON.parse(text))
                 .catch(err => console.error(err));
+            
+            const org = listAux.find(element => element.displayName === labName);
+
 
             if(!org) {
 
@@ -41,13 +48,16 @@ module.exports = {
                     );
                     return response.text();
                     })
-                    .then(text => console.log(text))
                     .catch(err => console.error(err));
+
+                org = JSON.parse(org);
             }
 
             const orgId = org.id;
 
-            if(org) {
+            console.log("orgId: ", orgId);
+
+            if(orgId) {
 
                 //Encontrar um Board que tenha o mesmo nome que o Kit selecionado
                 // const lab = fetch(`https://api.trello.com/1/organizations/${labName}/boards?key=${user.consumerKey}&token=${user.tokenTrello}`, {
@@ -68,7 +78,13 @@ module.exports = {
                 // const found = lab.find(element => element.name = kitName);
 
                 //Criação de um novo Board, o qual terá o nome do Kit escolhido
-                const board = await fetch(`https://api.trello.com/1/boards/?key=${user.consumerKey}&token=${user.tokenTrello}&idOrganization=${orgId}&name=${kitName}`, {
+
+                kitName = kitName.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+                kitName = kitName.replace(' ', '%20');
+
+                console.log(kitName);
+
+                const auxBoard = await fetch(`https://api.trello.com/1/boards/?key=${user.consumerKey}&token=${user.tokenTrello}&idOrganization=${orgId}&name=${kitName}&defaultLists=false`, {
                 method: 'POST'
                 })
                 .then(response => {
@@ -77,14 +93,17 @@ module.exports = {
                     );
                     return response.text();
                 })
-                .then(text => console.log(text))
                 .catch(err => console.error(err));
+
+                const board = JSON.parse(auxBoard);
+
+                console.log("BoardId: ", board.id);
                 
                 //Criação das listas e Cards no Board
                 let counter = 0;
-                listOfQuestions.array.forEach(async element => {
-                    
-                    const list = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name='Questão Essencial '${counter}&idBoard=${board.id}`, {
+                listOfQuestions.map(async element => {
+
+                    const listAux = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name=Questao%20Essencial%20${counter}&idBoard=${board.id}`, {
                     method: 'POST'
                     })
                     .then(response => {
@@ -93,10 +112,23 @@ module.exports = {
                         );
                         return response.text();
                     })
-                    .then(text => console.log(text))
                     .catch(err => console.error(err));
 
-                    const card = await fetch(`https://api.trello.com/1/cards?key=${user.consumerKey}&token=${user.tokenTrello}&idList=${list.id}$name=${element.title}`, {
+                    const list = JSON.parse(listAux);
+
+                    let question = element.question;
+
+                    question = question.replace(/ /g, '%20');
+                    question = question.replace('?', '%3F');
+                    question = question.replace('?', '%3F');
+                    question = question.replace('?', '%3F');
+                
+                    question = question.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+                    
+
+                    console.log("question", question);
+
+                    const card = await fetch(`https://api.trello.com/1/cards?key=${user.consumerKey}&token=${user.tokenTrello}&idList=${list.id}&name=${question}`, {
                         method: 'POST'
                     })
                     .then(response => {
@@ -105,7 +137,6 @@ module.exports = {
                         );
                         return response.text();
                     })
-                    .then(text => console.log(text))
                     .catch(err => console.error(err));
 
                     counter++;
@@ -122,7 +153,7 @@ module.exports = {
             
         }
 
-        return res.json(org);  
+        return true;  
         
     }
 };
