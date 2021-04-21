@@ -13,7 +13,7 @@ module.exports = {
             const { email } = req.body;
             const fetch = require('node-fetch');
             const user = await User.findOne({ email: email });
-            const token = "";
+            const token = user.token;
             console.log(token);
             let projects;
             let missions;

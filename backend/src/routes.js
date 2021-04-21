@@ -8,6 +8,7 @@ const routes = express.Router();
 routes.post('/users', UserController.store);
 routes.get('/users', UserController.show);
 routes.put('/users', UserController.update);
+routes.delete('/users', UserController.delete);
 
 routes.post('/importTrello', TrelloController.import);
 routes.get('/exportSrateegia', StrateegiaController.export);

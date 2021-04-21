@@ -51,16 +51,11 @@ async function getToken(email, password) {
 //     });
 
     let token = '';
+
     let projectsResponse = await fetch('https://api.strateegia.digital/users/v1/auth/signin', {
-                method: 'GET',
-                formData: {
-                            'username':'',
-                            'password':''
-                },
-                user: '',
-                password: '',
-                Headers: {
-                    'Authorization': 'Basic ' + Buffer.from('' + ":" + '').toString('base64')
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + Buffer.from(email + ":" + password).toString('base64')
                 }
                 })
                 .then(response => {
@@ -71,44 +66,89 @@ async function getToken(email, password) {
                         console.log('erro aq');
                         return '403';
                     }
-                    return JSON.parse(response.text());
+                    return response.text();
                 })
                 .then(response => token = response);
-    return '403';
+
+    return JSON.parse(projectsResponse);
 } 
 
 module.exports = {
     async store(req, res) {
 
-        const { email, password } = req.body;
-        let encryptedPassword = CryptoJS.SHA256(password);
-        encryptedPassword = encryptedPassword.toString(CryptoJS.enc.Base64);
-        let user = await User.findOne({ email });
+        let { email, password } = req.body;
+
+        const encryptedEmail = CryptoJS.SHA256(email).toString(CryptoJS.enc.Base64);
+        const encryptedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Base64);
+
+        let user = await User.findOne({ email: encryptedEmail, password: encryptedPassword });
+        console.log(user);
+
         let strateegia_token = await getToken(email, password);
-        console.log(strateegia_token);
+
+        email = encryptedEmail;
+        password = encryptedPassword;
+
         if(!user && strateegia_token != '403'){
+            console.log('Novo usuário');
+
             const tokenTrello = '#';
             const token = strateegia_token.access_token;
             const consumerKey = '#';
-            user = await User.create({ email, encryptedPassword, token, consumerKey, tokenTrello });
+            user = await User.create({ email, password, token, consumerKey, tokenTrello });
+        }
+
+        console.log('Strateegia Token: ', strateegia_token.access_token);
+        console.log('User token: ', user.token);
+
+        if(user && strateegia_token.access_token !== user.token) {
+            console.log('Mudou o token');
+            user = await User.updateOne({ email: email }, {token: strateegia_token.access_token });
         }
 
         return res.json(user);
     },
 
     async show(req, res) {
-        const { email } = req.body;
-        const user = await User.findOne({ email: email });
+        const { email, password } = req.body;
+
+        const encryptedEmail = CryptoJS.SHA256(email).toString(CryptoJS.enc.Base64);
+        const encryptedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Base64);        
+
+        const user = await User.findOne({ email: encryptedEmail, password: encryptedPassword });
 
         return res.json(user);
     },
 
     async update(req, res) {
         const { userEmail, tokenTrello, consumerKey } = req.body;
-        console.log(userEmail);
 
-        const user = await User.updateOne({ email: userEmail }, {consumerKey: consumerKey, tokenTrello: tokenTrello});
+        const encryptedEmail = CryptoJS.SHA256(userEmail).toString(CryptoJS.enc.Base64);
+
+        const user = await User.updateOne({ email: encryptedEmail }, {consumerKey: consumerKey, tokenTrello: tokenTrello});
         
         return res.json(user);
+    },
+
+    async delete(req, res) {
+        const { email } = req.body;
+
+        const encryptedEmail = CryptoJS.SHA256(email).toString(CryptoJS.enc.Base64);
+
+        try {
+            const user = await (await User.findOne({ email: encryptedEmail })).delete();
+
+            return res.json(user);
+        } catch(error){
+            console.log(error);
+
+            return res.json({
+                error: true,
+                message: error.message
+            });
+        }
+
+
+        
     }
 };

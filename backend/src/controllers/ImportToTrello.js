@@ -11,8 +11,8 @@ module.exports = {
 
             let listAux = [];
 
-            user.tokenTrello = "";
-            user.consumerKey = "";
+            user.tokenTrello = user.tokenTrello;
+            user.consumerKey = user.consumerKey;
 
             //Vai buscar se existe uma Organization com o nome do Lab;
             const listOfOrg = await fetch(`https://api.trello.com/1/members/me/organizations?key=${user.consumerKey}&token=${user.tokenTrello}`, {
