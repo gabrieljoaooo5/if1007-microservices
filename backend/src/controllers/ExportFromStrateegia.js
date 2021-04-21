@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const CryptoJS = require('crypto-js');
 const bodyParser = require('body-parser');
 let infoProject = [];
 let infoKit = [];

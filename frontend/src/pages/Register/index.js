@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi';
+import { FiArrowLeft, FiTrello } from 'react-icons/fi';
 
 import api from '../../services/api';
 import './styles.css';
@@ -37,6 +37,11 @@ export default function Register() {
         <section>
 
           <h1>Inserir dados do Trello</h1>
+
+         
+          <FiTrello size={16} color="#E02041" />
+          <a href="https://trello.com/app-key" target="_blank">Não possui os dados do Trello?</a>
+          
 
           <Link className="back-link" to="/">
             <FiArrowLeft size={16} color="#E02041" />

@@ -51,11 +51,13 @@ export default function Logon() {
 
           <input 
             placeholder="Email"
+            type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
           <input 
             placeholder="Senha"
+            type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
           />

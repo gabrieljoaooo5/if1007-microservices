@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const CryptoJS = require('crypto-js');
 
 module.exports = {
 
@@ -32,7 +33,7 @@ module.exports = {
                 .then(text => listAux = JSON.parse(text))
                 .catch(err => console.error(err));
             
-            const org = listAux.find(element => element.displayName === labName);
+            let org = listAux.find(element => element.displayName === labName);
 
 
             if(!org) {
@@ -103,9 +104,9 @@ module.exports = {
                 
                 //Criação das listas e Cards no Board
                 let counter = 0;
-                listOfQuestions.map(async element => {
+                listOfQuestions.map(async (element, currentValue) => {
 
-                    const listAux = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name=Questao%20Essencial%20${counter}&idBoard=${board.id}`, {
+                    const listAux = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name=Questao%20Essencial%20${currentValue}&idBoard=${board.id}`, {
                     method: 'POST'
                     })
                     .then(response => {
@@ -115,6 +116,8 @@ module.exports = {
                         return response.text();
                     })
                     .catch(err => console.error(err));
+
+                    counter += 1;
 
                     const list = JSON.parse(listAux);
 
@@ -140,8 +143,6 @@ module.exports = {
                         return response.text();
                     })
                     .catch(err => console.error(err));
-
-                    counter++;
                 });           
             }  
 
@@ -155,7 +156,7 @@ module.exports = {
             
         }
 
-        return true;  
+        return res.status(204).send();  
         
     }
 };

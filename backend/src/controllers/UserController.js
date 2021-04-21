@@ -103,7 +103,10 @@ module.exports = {
 
         if(user && strateegia_token.access_token !== user.token) {
             console.log('Mudou o token');
-            user = await User.updateOne({ email: email }, {token: strateegia_token.access_token });
+
+            user.token = strateegia_token.access_token;
+
+            userUpdate = await User.updateOne({ email: email }, {token: strateegia_token.access_token });
         }
 
         return res.json(user);
