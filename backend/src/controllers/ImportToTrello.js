@@ -7,7 +7,9 @@ module.exports = {
             let { email, labName, kitName, listOfQuestions } = req.body;
             const fetch = require('node-fetch');
 
-            const user = await User.findOne({ email: email });
+            const encryptedEmail = CryptoJS.SHA256(email).toString(CryptoJS.enc.Base64);
+
+            const user = await User.findOne({ email: encryptedEmail });
 
             let listAux = [];
 

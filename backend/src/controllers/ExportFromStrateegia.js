@@ -12,7 +12,10 @@ module.exports = {
         try{
             const { email } = req.body;
             const fetch = require('node-fetch');
-            const user = await User.findOne({ email: email });
+
+            const encryptedEmail = CryptoJS.SHA256(email).toString(CryptoJS.enc.Base64);
+
+            const user = await User.findOne({ email: encryptedEmail });
             const token = user.token;
             console.log(token);
             let projects;
