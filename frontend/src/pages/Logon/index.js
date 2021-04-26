@@ -28,7 +28,7 @@ export default function Logon() {
       
       console.log(response.data)
       
-      localStorage.setItem('userId', response.data.id);
+      localStorage.setItem('userId', response.data._id);
       localStorage.setItem('userEmail', email);
 
       if(response.data.tokenTrello !== '#') {

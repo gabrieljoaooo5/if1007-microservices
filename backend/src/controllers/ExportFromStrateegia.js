@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const CryptoJS = require('crypto-js');
 const bodyParser = require('body-parser');
-let infoProject = [];
+
 let infoKit = [];
 let infoAllProjects = [];
 let returnProjects = [];
@@ -10,9 +10,13 @@ let infoMission = [];
 module.exports = {
 
     async  export(req, res) {
+        let infoProject = [];
         try{
-            const { email } = req.body;
+            //const { email } = req.param;
+            const email = req.headers.authorization;
             const fetch = require('node-fetch');
+
+            console.log(email);
 
             const encryptedEmail = CryptoJS.SHA256(email).toString(CryptoJS.enc.Base64);
 

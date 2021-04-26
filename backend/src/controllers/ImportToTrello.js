@@ -101,12 +101,9 @@ module.exports = {
                 const board = JSON.parse(auxBoard);
 
                 console.log("BoardId: ", board.id);
-                
-                //Criação das listas e Cards no Board
-                let counter = 0;
-                listOfQuestions.map(async (element, currentValue) => {
 
-                    const listAux = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name=Questao%20Essencial%20${currentValue}&idBoard=${board.id}`, {
+                //Donelist
+                const listAuxDone = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name=Done&idBoard=${board.id}`, {
                     method: 'POST'
                     })
                     .then(response => {
@@ -117,9 +114,37 @@ module.exports = {
                     })
                     .catch(err => console.error(err));
 
-                    counter += 1;
+                //DoingList
+                const listAuxDoing = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name=Doing&idBoard=${board.id}`, {
+                    method: 'POST'
+                    })
+                    .then(response => {
+                        console.log(
+                        `Response: ${response.status} ${response.statusText}`
+                        );
+                        return response.text();
+                    })
+                    .catch(err => console.error(err));
+                
+                //ToDoList
+                //Criação das listas e Cards no Board
+                const listAuxToDo = await fetch(`https://api.trello.com/1/lists?key=${user.consumerKey}&token=${user.tokenTrello}&name=To%20Do&idBoard=${board.id}`, {
+                    method: 'POST'
+                    })
+                    .then(response => {
+                        console.log(
+                        `Response: ${response.status} ${response.statusText}`
+                        );
+                        return response.text();
+                    })
+                    .catch(err => console.error(err));
 
-                    const list = JSON.parse(listAux);
+
+                const list = JSON.parse(listAuxToDo);
+
+                listOfQuestions.map(async element => {
+
+                    
 
                     let question = element.question;
 
@@ -143,8 +168,12 @@ module.exports = {
                         return response.text();
                     })
                     .catch(err => console.error(err));
-                });           
-            }  
+                });
+
+                return res.json(board.id);
+            }
+            
+            
 
 
               
