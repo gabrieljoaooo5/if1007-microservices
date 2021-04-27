@@ -6,9 +6,13 @@ import './global.css';
 
 import Routes from './routes';
 
+import { SnackbarProvider } from 'notistack';
+
 function App() {
   return (
-    <Routes />
+    <SnackbarProvider>
+        <Routes />
+    </SnackbarProvider> 
   );
 }
 

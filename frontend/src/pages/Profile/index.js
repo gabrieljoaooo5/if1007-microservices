@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { FiPower, FiTrello, FiX } from 'react-icons/fi';
 import { Card, Button, ButtonGroup } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
+import { useSnackbar } from 'notistack';
 
 import './styles.css';
 import api from '../../services/api';
@@ -19,10 +20,7 @@ export default function Profile() {
   const [isFetchedKits, setIsFetchedKits] = useState(false);
   const [kitSaved, setKitSaved] = useState([]);
 
-  // const kitSaved = [
-  //   "Teste",
-  //   "testes"
-  // ];
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const email = localStorage.getItem('userEmail');
   const userId = localStorage.getItem('userId');
@@ -94,7 +92,6 @@ export default function Profile() {
       kitName,
       listOfQuestions
     };
-
     try {
       console.log(data);
       const response = await api.post('/importTrello', data);
@@ -110,12 +107,23 @@ export default function Profile() {
       };
 
       const response2 = await api.post('/kits', dataKit);
-
       setKitSaved([...kitSaved, boardName]);
       console.log(kitSaved);
 
+      enqueueSnackbar('Board criado com sucesso!', {
+        variant: "success",
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'center',
+      }});
     } catch (err) {
-      alert('Erro no cadastro, tente novamente.');
+      enqueueSnackbar('Trello atingiu o limite de criação de boards!', {
+        variant: "error",
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'center',
+      }});
+   
     }
 
   }

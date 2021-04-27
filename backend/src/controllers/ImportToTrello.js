@@ -61,27 +61,6 @@ module.exports = {
             console.log("orgId: ", orgId);
 
             if(orgId) {
-
-                //Encontrar um Board que tenha o mesmo nome que o Kit selecionado
-                // const lab = fetch(`https://api.trello.com/1/organizations/${labName}/boards?key=${user.consumerKey}&token=${user.tokenTrello}`, {
-                //     method: 'GET',
-                //     headers: {
-                //       'Accept': 'application/json'
-                //     }
-                //   })
-                //     .then(response => {
-                //       console.log(
-                //         `Response: ${response.status} ${response.statusText}`
-                //       );
-                //       return response.text();
-                //     })
-                //     .then(text => console.log(text))
-                //     .catch(err => console.error(err));
-
-                // const found = lab.find(element => element.name = kitName);
-
-                //Criação de um novo Board, o qual terá o nome do Kit escolhido
-
                 kitName = kitName.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
                 kitName = kitName.replace(' ', '%20');
 
@@ -94,12 +73,18 @@ module.exports = {
                     console.log(
                     `Response: ${response.status} ${response.statusText}`
                     );
+                    if(response.status == 400){
+                        return 400;
+                    }
                     return response.text();
                 })
                 .catch(err => console.error(err));
 
+                //If board
+                if(auxBoard == 400) {
+                    return res.status(400).send(); 
+                }
                 const board = JSON.parse(auxBoard);
-
                 console.log("BoardId: ", board.id);
 
                 //Donelist
