@@ -4,27 +4,15 @@
 /node_modules
 /.pnp
 .pnp.js
-./build
-nohup.out
-
-/build
-/~
 
 # testing
 /coverage
-/.vscode-root/
-/.vscode
 
-/.vscode
-
-# production -- uncomment build to ignore build folder
-# build
-
-.env
+# production
+/build
 
 # misc
 .DS_Store
-
 .env.local
 .env.development.local
 .env.test.local
