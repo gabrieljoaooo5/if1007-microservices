@@ -1,9 +1,6 @@
 const User = require('../models/User');
 const CryptoJS = require('crypto-js');
-const bodyParser = require('body-parser');
 
-let infoKit = [];
-let infoAllProjects = [];
 let returnProjects = [];
 let infoMission = [];
 
@@ -95,12 +92,6 @@ module.exports = {
                                 })
                                 .then(text => contents = JSON.parse(text))
                                 .catch(err => console.error(err));
-                            // console.log(`contents`);
-                            // console.log(contents);
-                            // infoKit.push({
-                            //     key:   mission.title,
-                            //     value: contents
-                            // });
                             contents = contents.content
                             console.log(contents)
                             contents = contents.map(function (item) { return item.kit});

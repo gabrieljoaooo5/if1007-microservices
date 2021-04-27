@@ -3,55 +3,6 @@ const CryptoJS = require('crypto-js');
 const fetch = require('node-fetch');
 
 async function getToken(email, password) {
-    // var request = require('request');
-
-
-    // var options = {
-    //     url: 'https://api.strateegia.digital/users/v1/auth/signin',
-    //     method: 'GET',
-    //     headers: { 'Authorization': 'Basic jgsa@cin.ufpe.br:' },
-    //     formData: {
-    //         'username':'jgsa@cin.ufpe.br',
-    //         'password':''
-    //     },
-
-    // }
-
-    // request.get(options, function(err,res,body) {
-    //     if(err){
-    //         console.log(err);
-    //         return;
-    //     }
-    //     console.log('status code :', res.statusCode);
-    // });
-//     var request = require('request');
-//         url = "https://api.strateegia.digital/users/v1/auth/signin",
-//         form
-
-// request(
-//     {
-//         url : "https://api.strateegia.digital/users/v1/auth/signin",
-//         formData: {
-//             'username': 'jgsa@cin.ufpe.br',
-//             'password': ''
-//         }
-//         // headers : {
-//         //     "Authorization" : "Basic "
-//         // }
-
-//     },
-//     function(error, response, body){
-//         if(error) {
-//             console.log(error);
-//         } else {
-//             console.log(response.statusCode, body);
-//             json = JSON.parse(response.body);
-//             console.log(response.statusCode, body);
-//     }
-//     });
-
-    let token = '';
-
     let projectsResponse = await fetch('https://api.strateegia.digital/users/v1/auth/signin', {
                 method: 'POST',
                 headers: {
