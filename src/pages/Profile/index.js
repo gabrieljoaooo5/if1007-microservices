@@ -174,7 +174,7 @@ export default function Profile() {
         </button>
       </header>
 
-      <h1>Casos cadastrados</h1>
+      <h1>Kits do Strateegia</h1>
 
       <div>
         <ButtonGroup>
